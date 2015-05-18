@@ -255,5 +255,101 @@ def with_transaction(func):
 
 
 # -------------------SQL func----------------------------
+def _select(sql, first, *args):
+	'''
+	execute select SQL and return unique or list result
+	'''
+	global _db_ctx
+	cursor = None
+	sql = sql.replace('?', '%s')
+	logging.info('SQL: %s, ARGS: %s' % (sql, args))
+	try:
+		cursor = _db_ctx.connection.cursor()
+		cursor.execute(sql, args)
+		if cursor.description:
+			names = [x[0] for x in cursor.description]
+		if first:
+			values = cursor.fetchone()
+			if not values:
+				return None
+			return Dict(names, values)
+		return [Dict(names, x) for x in cursor.fetchall()]
+	finally:
+		if cursor:
+			cursor.close()
 
 
+@with_connection
+def select_one(sql, *args):
+	'''
+	Execute select SQL and expected one result.
+	If no result found, return None.
+	If multiple results found, return the first one.
+	'''
+	return _select(sql, True, *args)
+
+
+@with_connection
+def select_itn(sql, *args):
+	'''
+	Execute select SQL and expected one int and only one int result.
+	'''
+	d = _select(sql, True, *args)
+	if len(d) != 1:
+		raise MultiColumnsError('Expected only one column.')
+	return d.values()[0]
+
+
+@with_connection
+def select(sql, *args):
+	'''
+	Execute select SQL and return list or empty list if no result.
+	'''
+	return _select(sql, False, *args)
+
+
+@with_connection
+def _update(sql, *args):
+	global _db_ctx
+	cursor = None
+	sql = sql.replace('?', '%s')
+	logging.info('SQL: %s, ARGS: %s' % (sql, args))
+	try:
+		cursor = _db_ctx.connection.cursor()
+		cursor.execute(sql, args)
+		r = cursor.rowcount
+		if _db_ctx.transactions == 0:
+			# no transaction enviroment
+			logging.info('auto commit.')
+			_db_ctx.connection.commit()
+		return r
+	finally:
+		if cursor:
+			cursor.close()
+
+
+def insert(table, **kw):
+	'''
+	Execute insert SQL.
+	'''
+	cols, args = zip(*kw.iteritems())
+	sql = 'insert int %s (%s) values (%s)' % (table, ','.join(['`%s`' % col for col in cols]), ','.join(['?' for i in range(len(cols))]))
+	return _update(sql, *args)
+
+
+def update(sql, *args):
+	'''
+	Execute update SQL.
+	'''
+	return _update(sql, *args)
+
+
+if __name__ == '__main__':
+	logging.basicConfig(level=logging.DEBUG)
+	create_engine('www-data', 'www-data', 'test')
+	update('drop table if exists user')
+	update('create table user (id int primary key, name text, email text, passwd text, last_modified real)')
+	import doctest
+	# ATTENTION!!!!
+	# TODO add test code
+	doctest.testmod()
