@@ -9,6 +9,7 @@ Database operation moudule
 
 import threading, time, logging, uuid, functools
 
+# Dict object:
 
 class Dict(dict):
 	'''
@@ -60,7 +61,7 @@ def next_id(t=None):
 	Return next id as 50-char string
 
 	Args:
-		t:unix timestamp, default to None and using time.time()
+		t: unix timestamp, default to None and using time.time()
 	'''
 	if t is None:
 		t = time.time()
@@ -92,6 +93,7 @@ class _LasyConnection(object):
 		if self.connection is None:
 			connection = engine.connect()
 			logging.info('open connection <%s>...' % hex(id(connection)))
+			self.connection = connection
 		return self.connection.cursor()
 
 	def commit(self):
@@ -120,6 +122,7 @@ class _DbCtx(threading.local):
 		return not self.connection is None
 
 	def init(self):
+		logging.info('open lazy connection...')
 		self.connection = _LasyConnection()
 		self.transactions = 0
 
@@ -136,6 +139,9 @@ class _DbCtx(threading.local):
 # thread-local db context
 _db_ctx = _DbCtx()
 
+# global engine object
+engine = None
+
 
 class _Engine(object):
 	'''
@@ -147,9 +153,6 @@ class _Engine(object):
 	def connect(self):
 		return self._connect()
 		
-# global engine object
-engine = None
-
 
 def create_engine(user, password, database, host='127.0.0.1', port=3306, **kw):
 	import mysql.connector
@@ -225,7 +228,7 @@ class _TransactionCtx(object):
 			_db_ctx.init()
 			self.should_close_conn = True
 		_db_ctx.transactions = _db_ctx.transactions + 1
-		logging.info('begin transaction...' if _db_ctx.transactions==-1 else 'join current transaction...')
+		logging.info('begin transaction...' if _db_ctx.transactions==1 else 'join current transaction...')
 		return self
 
 	def __exit__(self, exctype, excvalue, traceback):
@@ -367,7 +370,7 @@ def select_one(sql, *args):
 @with_connection
 def select_int(sql, *args):
 	'''
-	Execute select SQL and expected one int and only one int result.
+	Execute select SQL and expected one int and only one int result. 
 
 	>>> n = update('delete from user')
 	>>> u1 = dict(id=96900, name='Ada', email='ada@test.org', passwd='A-12345', last_modified=time.time())
@@ -390,8 +393,8 @@ def select_int(sql, *args):
 	MultiColumnsError: Expect only one column.
 	'''
 	d = _select(sql, True, *args)
-	if len(d) != 1:
-		raise MultiColumnsError('Expected only one column.')
+	if len(d)!=1:
+		raise MultiColumnsError('Expect only one column.')
 	return d.values()[0]
 
 
@@ -431,9 +434,9 @@ def _update(sql, *args):
 		cursor = _db_ctx.connection.cursor()
 		cursor.execute(sql, args)
 		r = cursor.rowcount
-		if _db_ctx.transactions == 0:
-			# no transaction enviroment
-			logging.info('auto commit.')
+		if _db_ctx.transactions==0:
+			# no transaction enviroment:
+			logging.info('auto commit')
 			_db_ctx.connection.commit()
 		return r
 	finally:
@@ -457,12 +460,12 @@ def insert(table, **kw):
 	IntegrityError: 1062 (23000): Duplicate entry '2000' for key 'PRIMARY'
 	'''
 	cols, args = zip(*kw.iteritems())
-	sql = 'insert int %s (%s) values (%s)' % (table, ','.join(['`%s`' % col for col in cols]), ','.join(['?' for i in range(len(cols))]))
+	sql = 'insert into %s (%s) values (%s)' % (table, ','.join(['`%s`' % col for col in cols]), ','.join(['?' for i in range(len(cols))]))
 	return _update(sql, *args)
 
 
 def update(sql, *args):
-	'''
+	r'''
 	Execute update SQL.
 
 	>>> u1 = dict(id=1000, name='Michael', email='michael@test.org', passwd='123456', last_modified=time.time())
@@ -492,4 +495,4 @@ if __name__ == '__main__':
 	update('drop table if exists user')
 	update('create table user (id int primary key, name text, email text, passwd text, last_modified real)')
 	import doctest
-	doctest.testmod()
+	doctest.testmod(verbose=True)

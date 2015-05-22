@@ -153,7 +153,7 @@ class ModelMetaclass(type):
 					v.name = k
 				logging.info('Found mapping: %s => %s' % (k, v))
 				# check duplicate primary key
-				if v.primary:
+				if v.primary_key:
 					if primary_key:
 						raise TypeError('Cannot define more than 1 primary key in class:%s' % name)
 					if v.updatable:
@@ -186,13 +186,13 @@ class Model(dict):
 	Base class for ORM.
 
 	>>> class User(Model):
-	... id = IntegerField(primary_key=True)
-	... name = StringField()
-	... email = StringField(updatable=False)
-	... passwd = StringField(default=lambda: '******')
-	... last_modified = FloatField()
-	... def pre_insert(self):
-	... self.last_modified = time.time()
+	... 	id = IntegerField(primary_key=True)
+	... 	name = StringField()
+	... 	email = StringField(updatable=False)
+	... 	passwd = StringField(default=lambda: '******')
+	... 	last_modified = FloatField()
+	... 	def pre_insert(self):
+	... 		self.last_modified = time.time()
 	>>> u = User(id=10190, name='Michael', email='orm@db.org')
 	>>> r = u.insert()
 	>>> u.email
@@ -220,12 +220,12 @@ class Model(dict):
 	>>> print User().__sql__()
 	-- generating SQL for user:
 	create table `user` (
-	`id` bigint not null,
-	`name` varchar(255) not null,
-	`email` varchar(255) not null,
-	`passwd` varchar(255) not null,
-	`last_modified` real not null,
-	primary key(`id`)
+	 `id` bigint not null,
+	 `name` varchar(255) not null,
+	 `email` varchar(255) not null,
+	 `passwd` varchar(255) not null,
+	 `last_modified` real not null,
+	 primary key(`id`)
 	);
 	'''
 	__metaclass__ = ModelMetaclass
@@ -264,7 +264,7 @@ class Model(dict):
 		'''
 		Find all and return list.
 		'''
-		L = db.select('select * from `%s`' & cls.__table__)
+		L = db.select('select * from `%s`' % cls.__table__)
 		return [cls(**d) for d in L]
 
 	@classmethod
