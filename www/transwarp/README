@@ -1,0 +1,19 @@
+/www/ 目录的说明
+
+[db.py]
+	使用MySQL的数据库操作模块。一个封装基本的SELECT、INSERT、UPDATE和DELET操作的db模块。
+1. 定义一个持有数据库连接的上下文对象:_db_ctx, 该对象是一个threadlocal对象，所以，它持有的数据库连接对于每个线程看到的都是不一样的。
+任何一个线程都无法访问到其他线程持有的数据库连接。
+//TODO
+
+
+[orm.py]
+	ORM全称“Object Relational Mapping”，即对象-关系映射，就是把关系数据库的一行映射为一个对象，也就是一个类对应一个表，这样，写代码更简单，不用直接操作SQL语句。
+1. 基类Model：
+2. 元类ModelMetaclass：
+3. 实现database操作的方法：
+
+
+[web.py]
+	一个简单、灵活、入侵性极小的Web框架。
+1.
