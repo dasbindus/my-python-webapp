@@ -1217,7 +1217,6 @@ class TemplateEngine(object):
 		return '<!-- override this method to render template -->'
 
 class Jinja2TemplateEngine(TemplateEngine):
-
 	'''
 	Render using jinjia2 template engine.
 
