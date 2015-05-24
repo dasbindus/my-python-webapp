@@ -566,7 +566,7 @@ class StaticFileRoute(object):
 	def __init__(self):
 		self.method = 'GET'
 		self.is_static = False
-		self.route - re.compile('^/static/(.+)$')
+		self.route = re.compile('^/static/(.+)$')
 
 	def match(self, url):
 		if url.startswith('/static/'):
