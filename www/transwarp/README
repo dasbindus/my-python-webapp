@@ -1,4 +1,4 @@
-/www/ 目录的说明
+/www/transwarp/ 目录的说明
 
 [db.py]
 	使用MySQL的数据库操作模块。一个封装基本的SELECT、INSERT、UPDATE和DELET操作的db模块。
