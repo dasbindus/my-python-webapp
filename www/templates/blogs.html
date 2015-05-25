@@ -1,0 +1,39 @@
+{% extends '__base__.html' %}
+
+{% block title %}BLOGS{% endblock %}
+
+{% block beforehead %}
+
+<script>
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+	<div class="uk-width-medium-3-4">
+	{% for blog in blogs %}
+		<article class="uk-article">
+			<h2><a href="/blog/{{ blog.id }}">{{ blog.name }}</a></h2>
+			<p class="uk-article-meta">Edit at{{ blog.created_at }}</p>
+			<p>{{ blog.summary }}</p>
+			<p><a href="/blog/{{ blog.id }}">Keep reading <i class="uk-icon-angle-double-right"></i></a></p>
+		</article>
+		<hr class="uk-article-divider">
+	{% endfor %}
+	</div>
+
+	<div class="uk-width-medium-1-4">
+		<div class="uk-panel uk-panel-header">
+			<h3 class="uk-panel-title">More Links</h3>
+			<ul class="uk-list uk-list-line">
+				<li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">Coding</a></li>
+				<li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">Reading</a></li>
+				<li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">Android</a></li>
+				<li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">Python</a></li>
+				<li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">Git</a></li>
+			</ul>
+		</div>
+	</div>
+
+{% endblock %}

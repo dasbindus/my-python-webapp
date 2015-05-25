@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	{% block meta %}<!-- block meta -->{% endblock %}
+	<title>{% block title %} ? {% endblock %} - My Python Webapp</title>
+	<!--[if it IE9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" href="/static/css/uikit.min.css">
+	<link rel="stylesheet" href="/static/css/uikit.gradient.min.css">
+	<link rel="stylesheet" href="/static/css/awesome.css">
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/md5.js"></script>
+	<script src="/static/js/uikit.min.js"></script>
+	<script src="/static/js/sticky.min.js"></script>
+	<script src="/static/js/vue.min.js"></script>
+	<script src="/static/js/awesome.js"></script>
+	{% block breforehead %}<!--  before head  -->{% endblock %}
+</head>
+<body>
+	<nav class="uk-navbar uk-navbar-attached uk-margin-bottom">
+		<div class="uk-container uk-container-center">
+			<a href="/" class="uk-navbar-brand">MyHome</a>
+			<ul class="uk-navbar-nav">
+				<li data-url="blog"><a href="/"><i class="uk-icon-home"></i> BLOG</a></li>
+				<li><a target="_blank" href="#"><i class="uk-icon-book"></i> TEST1</a></li>
+				<li><a target="_blank" href="#"><i class="uk-icon-code"></i> TEST2</a></li>
+			</ul>
+			<div class="uk-navbar-flip">
+				<ul class="uk-navbar-nav">
+				{% if user %}
+					<li class="uk-parent" data-uk-drop-down>
+						<a href="#0"><i class="uk-icon-user"></i> {{ user.name }}</a>
+						<div class="uk-dropdown uk-dropdown-navbar">
+							<ul class="uk-nav uk-nav-navbar">
+								<li><a href="/sigout"><i class="uk-icon-sign-out"></i> Sign out</a></li>
+							</ul>
+						</div>
+					</li>
+				{% else %}
+					<li><a href="/signin"><i class="uk-icon-sign-in"></i> Sign in</a></li>
+					<li><a href="/register"><i class="uk-icon-edit"></i> Register</a></li>
+				{% endif %}
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="uk-container uk-container-center">
+		<div class="uk-grid">
+			<!-- content -->
+			{% block content %}
+			{% endblock %}
+			<!-- // content -->
+		</div>
+	</div>
+
+	<div class="uk-margin-large-top" style="background-color:#eee; border-top:1px solid #ccc;">
+		<div class="uk-container uk-container-center uk-text-center">
+			<div class="uk-panel uk-margin-top uk-margin-bottom">
+				<p>
+					<a target="_blank" href="http://weibo.com/u/2886292714" class="uk-icon-button uk-icon-weibo"></a>
+					<a target="_blank" href="https://github.com/dasbindus" class="uk-icon-button un-icon-github"></a>
+					<a target="_blank" href="#" class="uk-icon-button uk-icon-linkedin-square"></a>
+					<a target="_blank" href="#" class="uk-icon-button uk-icon-twitter"></a>
+				</p>
+				<p>Powered by <a href="#">My Python Webapp</a>. Copyright &copy; 2014. [<a href="/manage/" target="_blank">Manage</a>]</p>
+				<p><a href="https://github.com/dasbindus" target="_blank">https://github.com/dasbindus</a>. All right reserved.</p>
+				<a target="_blank" href="#"><i class="uk-icon-html5" style="font-size:64px; color: #444;"></i></a>
+			</div>
+			
+		</div>
+	</div>
+</body>
+</html>
