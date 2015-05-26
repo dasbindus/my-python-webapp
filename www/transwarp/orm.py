@@ -5,13 +5,11 @@ __author__ = 'Jack Bai'
 
 '''
 Database operation module. This module is independent with web module
-
 ORM:把关系数据库的一行映射为一个对象，也就是一个类对应一个表，这样，写代码更简单，不用直接操作SQL语句
 '''
 
 import time, logging
 import db
-
 
 class Field(object):
 
@@ -41,7 +39,6 @@ class Field(object):
 		s.append('>')
 		return ''.join(s)
 
-
 class StringField(Field):
 
 	def __init__(self, **kw):		
@@ -50,7 +47,6 @@ class StringField(Field):
 		if not 'ddl' in kw:
 			kw['ddl']  = 'varchar(255)'
 		super(StringField, self).__init__(**kw)
-
 
 class IntegerField(Field):
 
@@ -61,7 +57,6 @@ class IntegerField(Field):
 			kw['ddl'] = 'bigint'
 		super(IntegerField, self).__init__(**kw)
 
-
 class FloatField(Field):
 		
 	def __init__(self, **kw):
@@ -70,7 +65,6 @@ class FloatField(Field):
 		if not 'ddl' in kw:
 			kw['ddl'] = 'real'
 		super(FloatField, self).__init__(**kw)
-
 
 class BooleanField(Field):
 		
@@ -81,7 +75,6 @@ class BooleanField(Field):
 			kw['ddl'] = 'bool'
 		super(BooleanField, self).__init__(**kw)
 
-
 class TextField(Field):
 		
 	def __init__(self, **kw):
@@ -90,7 +83,6 @@ class TextField(Field):
 		if not 'ddl' in kw:
 			kw['ddl'] = 'text'
 		super(TextField, self).__init__(**kw)
-
 
 class BlobField(Field):
 
@@ -101,15 +93,12 @@ class BlobField(Field):
 			kw['ddl'] = 'blob'
 		super(BlobField, self).__init__(**kw)
 
-
 class VersionField(Field):
 
 	def __init__(self, name=None):
 		super(VersionField, self).__init__(name=name, default=0, ddl='bigint')
 
-
 _triggers = frozenset(['pre_insert', 'pre_update', 'pre_delete'])
-
 		
 def _gen_sql(table_name, mappings):
 	pk = None
@@ -121,11 +110,10 @@ def _gen_sql(table_name, mappings):
 		nullable = f.nullable
 		if f.primary_key:
 			pk = f.name
-		sql.append(nullable and ' `%s` %s,' % (f.name, ddl) or ' `%s` %s not null,' % (f.name, ddl))
-	sql.append(' primary key(`%s`)' % pk)
+		sql.append(nullable and '  `%s` %s,' % (f.name, ddl) or '  `%s` %s not null,' % (f.name, ddl))
+	sql.append('  primary key(`%s`)' % pk)
 	sql.append(');')
 	return '\n'.join(sql)
-
 
 class ModelMetaclass(type):
 	'''
@@ -171,9 +159,9 @@ class ModelMetaclass(type):
 			attrs.pop(k)
 		if not '__table__' in attrs:
 			attrs['__table__'] = name.lower()
-			attrs['__mappings__'] = mappings
-			attrs['__primary_key__'] = primary_key
-			attrs['__sql__'] = lambda self: _gen_sql(attrs['__table__'], mappings)
+		attrs['__mappings__'] = mappings
+		attrs['__primary_key__'] = primary_key
+		attrs['__sql__'] = lambda self: _gen_sql(attrs['__table__'], mappings)
 		for trigger in _triggers:
 			if not trigger in attrs:
 				attrs[trigger] = None
@@ -220,12 +208,12 @@ class Model(dict):
 	>>> print User().__sql__()
 	-- generating SQL for user:
 	create table `user` (
-	 `id` bigint not null,
-	 `name` varchar(255) not null,
-	 `email` varchar(255) not null,
-	 `passwd` varchar(255) not null,
-	 `last_modified` real not null,
-	 primary key(`id`)
+	  `id` bigint not null,
+	  `name` varchar(255) not null,
+	  `email` varchar(255) not null,
+	  `passwd` varchar(255) not null,
+	  `last_modified` real not null,
+	  primary key(`id`)
 	);
 	'''
 	__metaclass__ = ModelMetaclass
