@@ -46,6 +46,8 @@ wsgi.template_engine = template_engine
 # 加载带有@get/@post的URL处理函数:
 import urls
 
+wsgi.add_interceptor(urls.user_interceptor)
+wsgi.add_interceptor(urls.manage_interceptor)
 wsgi.add_module(urls)
 
 # 在9000端口上启动本地测试服务器:
