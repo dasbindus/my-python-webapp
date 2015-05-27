@@ -25,7 +25,7 @@ $(function () {
                 event.preventDefault();
                 postApi(action, this.$data, function (err, r) {
                     if (err) {
-                        alert(err+'asd');
+                        alert('Error:' + err);
                     }
                     else {
                         alert('保存成功！');
