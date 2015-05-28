@@ -21,11 +21,23 @@
 		</article>
 		<hr class="uk-article-divider">
 	{% endfor %}
+		<ul class="uk-pagination">
+		{% if page.has_previous %}
+			<li><a href="/?page={{ page.page_index - 1 }}"><i class="uk-icon-double-left"></i></a></li>
+		{% else %}
+			<li class="uk-disabled"><span><i class="uk-icon-angle-double-left"></i></span></li>
+		{% endif %}
+			<li class="uk-active"><span>{{ page.page_index }}</span></li>
+		{% if page.has_next %}
+			<li><a href="/?page={{ page.page_index + 1 }}"><i class="uk-icon-angle-double-right"></i></a></li>
+		{% else %}
+			<li class="uk-disabled"><span><i class="uk-icon-angle-double-right"></i></span></li>
+		</ul>
 	</div>
 
 	<div class="uk-width-medium-1-4">
 		<div class="uk-panel uk-panel-header">
-			<h3 class="uk-panel-title">Links</h3>
+			<h3 class="uk-panel-title">友情链接</h3>
 			<ul class="uk-list uk-list-line">
 				<li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">My Coding</a></li>
 				<li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="#">My Reading</a></li>
