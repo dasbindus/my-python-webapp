@@ -1,0 +1,90 @@
+Python Webapp 的部署（Centos）
+
+1. 目录结构
+/
++- srv/
+   +- my-python-webapp/ <-- Web App根目录
+      +- www/           <-- 存放Python源码
+      |  +- static/     <-- 存放静态资源文件
+      |  +- templates/  <-- 存放模板文件
+      |  +- transwarp/  <-- web框架、ORM、db模块等
+      +- log/           <-- 存放log
+
+2. 服务器端架构
+（图 server-framework1 和 server-framework2）
+
+3. 总结一下需要用到的服务：
+    *Nginx：高性能Web服务器+负责反向代理；
+    *gunicorn：高性能WSGI服务器；
+    *gevent：把Python同步代码变成异步协程的库；
+    *Supervisor：监控服务进程的工具（Nginx可以作为服务进程直接启动，但gunicorn还不行，所以用Supervisor调用gunicorn)
+    *MySQL：数据库服务。
+
+4. 软件安装
+（1）Nginx
+    依赖库：系统已有安装gcc, automake, g++等相关模块，没有的需要安装。 另外，安装pcre库、zlib库，ssl库.
+    安装：下载源码安装
+    配置：配置文件在安装目录下的conf/nginx.conf 
+    server {
+        listen      80;
+
+        root       /srv/my-python-webapp
+        /www;
+        access_log /srv/my-python-webapp/log/access_log;
+        error_log  /srv/my-python-webapp/log/error_log;
+
+        # server_name my-python-webapp.liaoxuefeng.com;
+
+        client_max_body_size 1m;
+
+        gzip            on;
+        gzip_min_length 1024;
+        gzip_buffers    4 8k;
+        gzip_types      text/css application/x-javascript application/json;
+
+        sendfile on;
+
+        location /favicon.ico {
+            root /srv/my-python-webapp/www;
+        }
+
+        location ~ ^\/static\/.*$ {
+            root /srv/my-python-webapp/www;
+        }
+
+        location / {
+            proxy_pass       http://127.0.0.1:9000;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+    }
+
+（2）supervisor
+    安装：easy_install supervisor（可能有相关的依赖库）
+    配置：在/etc/supervisor.conf 添加
+    [program:my-python-webapp]
+    command     = /usr/bin/gunicorn --bind 127.0.0.1:9000 --workers 1 --worker-class gevent wsgiapp:application
+    directory   = /srv/my-python-webapp/www
+    user        = www-data
+    startsecs   = 3
+
+    redirect_stderr         = true
+    stdout_logfile_maxbytes = 50MB
+    stdout_logfile_backups  = 10
+    stdout_logfile          = /srv/my-python-webapp/log/app.log
+
+（3）gevent
+    依赖库：libevent  greenlet
+    安装：easy_install gevent
+
+（4）gunicorn
+    安装：easy_install gunicorn
+
+5. 注意事项
+    若没有www-data用户和用户组，需要先创建
+    # groupadd www-data
+    # useradd -g www-data www-data
+
+6. 部署
+    部署采用Fabric的脚本。
