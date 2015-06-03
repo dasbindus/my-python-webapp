@@ -173,6 +173,20 @@ def _get_blogs_by_page():
 	blogs = Blog.find_by('order by created_at desc limit ?,?', page.offset, page.limit)
 	return blogs, page
 
+
+@view('about.html')
+@get('/about')
+def about():
+	user = ctx.request.user
+	return dict(user=user)
+
+
+@view('user_info.html')
+@get('/user_info')
+def user_info():
+	user = ctx.request.user
+	return dict(user=user, name=user.name, image=user.image, email=user.email)
+
 # ========================== manage ====================================
 
 @get('/manage/')
@@ -250,7 +264,7 @@ def api_create_blog():
 	if not content:
 		raise APIValueError('content', 'content cannot be empty.')
 	user = ctx.request.user
-	blog = Blog(user_id=user.id, user_name=user.name, name=name, summary=summary, content=content)
+	blog = Blog(user_id=user.id, user_name=user.name, user_image=user.image, name=name, summary=summary, content=content)
 	blog.insert()
 	return blog
 

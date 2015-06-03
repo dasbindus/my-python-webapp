@@ -1,0 +1,25 @@
+{% extends '__base__.html' %}
+
+{% block title %}个人信息{% endblock %}
+
+{% block beforehead %}
+
+{% endblock %}
+
+
+{% block content %}
+    <div id="front">
+        {% if user %}
+        <label class="uk-form-label">名字:</label>
+        <p>{{ name }}</p>
+        <label class="uk-form-label">邮箱:</label>
+        <p>{{ email }}</p>
+        <label class="uk-form-label">头像:</label>
+        <p>
+            <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ image }}">
+        </p>
+        {% else %}
+        <p>出现错误！</p>
+        {% endif %}
+    </div>
+{% endblock %}

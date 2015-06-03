@@ -22,17 +22,17 @@
 <body>
     <nav class="uk-navbar uk-navbar-attached uk-margin-bottom">
         <div class="uk-container uk-container-center">
-            <a href="/" class="uk-navbar-brand">Home</a>
+            <a href="/" class="uk-navbar-brand">Dasbindus的博客</a>
             <ul class="uk-navbar-nav">
                 <li data-url="blogs"><a href="/"><i class="uk-icon-home"></i> Blog</a></li>
                 <li><a target="_blank" href="#"><i class="uk-icon-book"></i> Book</a></li>
-                <li><a target="_blank" href="#"><i class="uk-icon-code"></i> Code</a></li>
+                <li><a target="_blank" href="/about"><i class="uk-icon-code"></i> About</a></li>
             </ul>
             <div class="uk-navbar-flip">
                 <ul class="uk-navbar-nav">
                 {% if user %}
                     <li class="uk-parent" data-uk-dropdown>
-                        <a href="#0"><i class="uk-icon-user"></i> {{ user.name }}</a>
+                        <a href="/user_info"><i class="uk-icon-user"></i> {{ user.name }}</a>
                         <div class="uk-dropdown uk-dropdown-navbar">
                             <ul class="uk-nav uk-nav-navbar">
                                 <li><a href="/signout"><i class="uk-icon-sign-out"></i> Logout</a></li>
@@ -61,7 +61,7 @@
         <div class="uk-container uk-container-center uk-text-center">
             <div class="uk-panel uk-margin-top uk-margin-bottom">
                 <p>
-                    <a target="_blank" href="#" class="uk-icon-button uk-icon-weibo"></a>
+                    <a target="_blank" href="http://weibo.com/2886292714/profile?topnav=1&wvr=6" class="uk-icon-button uk-icon-weibo"></a>
                     <a target="_blank" href="https://github.com/dasbindus" class="uk-icon-button uk-icon-github"></a>
                     <a target="_blank" href="#" class="uk-icon-button uk-icon-linkedin-square"></a>
                     <a target="_blank" href="#" class="uk-icon-button uk-icon-twitter"></a>
