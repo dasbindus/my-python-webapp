@@ -78,3 +78,20 @@ def deploy():
         sudo('supervisorctl stop my-python-webapp')
         sudo('supervisorctl start my-python-webapp')
         sudo('/usr/local/nginx/sbin/nginx -s reload')
+
+
+RE_FILES = re.compile('\r?\n')
+
+
+def rollback():
+    '''
+    rollback to previous version.
+    '''
+    pass
+
+
+def restore2local():
+    '''
+    restore db to local.
+    '''
+    pass
